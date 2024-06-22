@@ -1,0 +1,80 @@
+1. Listar todos los artistas y sus diseños publicados. Mostrar el nombre del artista y el nombre de sus diseños.
+
+SELECT
+    Artistas.nombre_artista AS Nombre_Artista,
+    Diseños.nombre AS Nombre_Diseño
+FROM
+    Artistas
+    JOIN Diseños ON Artistas.id = Diseños.artista_id
+ORDER BY
+    Nombre_Artista,
+    Nombre_Diseño;
+    
+2. Encontrar los diseños más populares. Obtener el nombre del diseño y el número de veces que ha sido seleccionado por los clientes. Limitar a los primeros 5.
+
+SELECT
+    Diseños.nombre AS Nombre_Diseño,
+    COUNT(Compras.diseño_id) AS Numero_De_Compras
+FROM
+    Compras
+    JOIN Diseños ON Compras.diseño_id = Diseños.id
+GROUP BY
+    Nombre_Diseño
+ORDER BY
+    Numero_De_Compras DESC
+LIMIT
+    5;
+
+3. Encontrar los 3 artistas con diseños más recientes. Mostrar el nombre del artista y la fecha del diseño más reciente que ha publicado.
+
+SELECT
+    Artistas.nombre_artista AS Nombre_Artista,
+    MAX(Diseños.fecha_publicacion) AS Fecha_Mas_Reciente
+FROM
+    Artistas
+    JOIN Diseños ON Artistas.id = Diseños.artista_id
+GROUP BY
+    Nombre_Artista
+ORDER BY
+    Fecha_Mas_Reciente DESC
+LIMIT
+    3;
+
+4. Listar los clientes que han seleccionado más diseños. Mostrar el nombre del cliente y el número de diseños que ha seleccionado.
+
+SELECT
+    Clientes.nombre_cliente AS Nombre_Cliente,
+    COUNT(DISTINCT Compras.diseño_id) AS Numero_De_Diseños_Seleccionados
+FROM
+    Clientes
+    JOIN Compras ON Clientes.id = Compras.cliente_id
+GROUP BY
+    Nombre_Cliente
+ORDER BY
+    Numero_De_Diseños_Seleccionados DESC;
+
+5. Encontrar los diseños que coincidan con una palabra clave específica. Permitir que los clientes busquen diseños utilizando una palabra clave y mostrar el nombre del diseño y el nombre del artista que lo publicó.
+
+SELECT
+    Diseños.nombre AS Nombre_Diseño,
+    Artistas.nombre_artista AS Nombre_Artista
+FROM
+    Diseños
+    JOIN Artistas ON Diseños.artista_id = Artistas.id
+    JOIN DiseñosTags ON Diseños.id = DiseñosTags.diseño_id
+    JOIN Tags ON DiseñosTags.tag_id = Tags.id
+WHERE
+    Tags.nombre LIKE CONCAT ('%', 'Palabra Clave', '%');
+
+6. Listado de clientes inactivos. Listar clientes que no han iniciado sesión durante un período de tiempo específico, indicando su inactividad.
+
+SELECT
+    correo_electronico AS Correo,
+    nombre_cliente AS Nombre,
+    ultima_actividad AS Ultima_Actividad
+FROM
+    Clientes
+WHERE
+    Ultima_Actividad < NOW () - INTERVAL 10 MINUTE -- INTERVAL (numero) (unidad de tiempo)
+ORDER BY
+    Ultima_Actividad DESC;
